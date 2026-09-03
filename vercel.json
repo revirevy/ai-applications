@@ -1,1 +1,1 @@
-{"experimentalServices":{"api":{"entrypoint":"backend/main.py","routePrefix":"/api"}}}
+{"services":{"api":{"entrypoint":"backend/main.py","routePrefix":"/api"}}}
