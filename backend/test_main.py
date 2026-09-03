@@ -18,3 +18,12 @@ def test_overview_contract():
 def test_import_rejects_http():
     response = client.post('/imports', json={'url': 'http://example.com/file.xlsx'})
     assert response.status_code == 400
+
+def test_sprint_contract():
+    response = client.get('/sprint')
+    body = response.json()
+    assert response.status_code == 200
+    assert {'items', 'summary'} <= body.keys()
+    assert body['summary']['total'] == len(body['items'])
+    assert body['summary']['done'] >= 1
+    assert all({'task', 'status', 'progress', 'owner'} <= item.keys() for item in body['items'])

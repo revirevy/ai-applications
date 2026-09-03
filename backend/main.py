@@ -26,6 +26,20 @@ def datasets(): return {"items":DATASETS,"total":len(DATASETS)}
 def quality(): return {"items":QUALITY,"summary":{"score":92,"critical":7,"warnings":24}}
 @app.get("/provenance")
 def provenance(): return {"items":[{"step":"Source déposée","value":"pmsi_fixture_2026.csv","meta":"Fixture synthétique · locale","state":"done"},{"step":"Import et validation","value":"imp_2026_01","meta":"18 420 lignes · 00:01:42","state":"done"},{"step":"Normalisation","value":"sejours_normalises","meta":"DuckDB + Parquet","state":"done"},{"step":"Indicateur","value":"Tableau de bord DIM","meta":"Calculé à la demande","state":"current"}]}
+SPRINT_ITEMS = [
+ {"id":"S1-01","workstream":"Fondations","task":"API santé et structure Next.js","reference":"SDD · architecture","owner":"Équipe produit","status":"done","progress":100,"priority":"Haute","note":"Socle local-first opérationnel."},
+ {"id":"S1-02","workstream":"Données","task":"Import PMSI et validation HTTPS","reference":"PRD · ingestion","owner":"Data engineering","status":"done","progress":100,"priority":"Haute","note":"Fixture et validation de source disponibles."},
+ {"id":"S1-03","workstream":"Qualité","task":"Contrôles qualité et alertes","reference":"PRD · qualité","owner":"Médecin DIM","status":"done","progress":100,"priority":"Haute","note":"Score, contrôles et anomalies affichés."},
+ {"id":"S2-01","workstream":"Analyse","task":"Vue d’ensemble KPI et tendances","reference":"PRD · dashboard","owner":"Équipe produit","status":"done","progress":100,"priority":"Haute","note":"Dashboard principal livré."},
+ {"id":"S2-02","workstream":"Traçabilité","task":"Datasets, provenance et référentiel","reference":"PRD · auditabilité","owner":"Data engineering","status":"in_progress","progress":55,"priority":"Moyenne","note":"Endpoints présents, écrans dédiés à finaliser."},
+ {"id":"S2-03","workstream":"Expérience","task":"Écrans dédiés Imports, Qualité et Datasets","reference":"PRD · navigation","owner":"Frontend","status":"planned","progress":15,"priority":"Moyenne","note":"Navigation visuelle existante, vues à connecter."},
+ {"id":"S3-01","workstream":"Opérations","task":"Workflow d’import fichier utilisateur","reference":"PRD · import réel","owner":"Frontend + API","status":"planned","progress":0,"priority":"Haute","note":"Remplacer l’alerte de démonstration par un flux complet."},
+ {"id":"S3-02","workstream":"Gouvernance","task":"Formaliser PRD et SDD dans le dépôt","reference":"SDD / PRD","owner":"Product","status":"blocked","progress":0,"priority":"Basse","note":"Documents sources absents du dépôt actuel."}
+]
+@app.get("/sprint")
+def sprint():
+    counts = {state: sum(1 for item in SPRINT_ITEMS if item["status"] == state) for state in ("done","in_progress","planned","blocked")}
+    return {"items": SPRINT_ITEMS, "summary": {"total": len(SPRINT_ITEMS), **counts, "completion": round(sum(i["progress"] for i in SPRINT_ITEMS) / len(SPRINT_ITEMS))}}
 class ImportRequest(BaseModel):
     url: HttpUrl | None = None
     filename: str = "formats_mco_2026.xlsx"
